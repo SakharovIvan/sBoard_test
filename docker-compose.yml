@@ -1,0 +1,63 @@
+version: "3"
+services:
+
+  db:
+    image: postgres
+    container_name: postgres-db
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: root
+      POSTGRES_DB: fortest
+    ports:
+      - "24:24"
+
+  auth_service: 
+    build: auth_service/
+    command: npm start
+    network_mode: host
+    ports: 
+      - 3001:3001
+    depends_on:
+    - db
+
+  client:
+    build: client-react/
+    command: npm start
+    network_mode: host
+    depends_on:
+      - auth_service
+
+  image_processing_service:
+    build: image_processing_service/
+    command: npm start
+    network_mode: host
+    ports: 
+      - 3003:3003
+    depends_on:
+      - db
+      - minio1
+
+
+  minio1:
+      image: minio/minio:latest
+      container_name: minio1  
+      environment:
+        - MINIO_ROOT_USER=minio
+        - MINIO_ROOT_PASSWORD=minio123
+        - MINIO_DOMAIN=localhost
+
+      ports:
+        - '9000:9000'
+        - '9001:9001'
+      volumes:
+        - minio-storage:/data  
+        - minio-config:/root/.minio 
+      command: server --address ":9000" --console-address ":9001" /data
+
+volumes:
+  minio-storage:
+  minio-config:
+
+
+
+
