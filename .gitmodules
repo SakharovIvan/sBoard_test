@@ -1,3 +1,6 @@
 [submodule "auth_service"]
 	path = auth_service
 	url = https://github.com/SakharovIvan/sBoard_test_auth_service
+[submodule "image_processing_service"]
+	path = image_processing_service
+	url = https://github.com/SakharovIvan/sBoard_test_image_processing_service
